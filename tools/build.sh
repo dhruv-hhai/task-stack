@@ -6,8 +6,8 @@ set -e
 # Create dist directory if it doesn't exist
 mkdir -p dist
 
-# Run esbuild to bundle the application
-./node_modules/.bin/esbuild src/app.js \
+# Run esbuild to bundle the application using npx
+npx esbuild src/app.js \
     --bundle \
     --minify \
     --outfile=dist/app.js \
