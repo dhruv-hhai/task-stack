@@ -20,6 +20,28 @@ function renderQueue() {
 
 /* -------------- import from Obsidian -------------- */
 const fileInput = document.getElementById('fileInput');
+const exportBtn = document.getElementById('exportBtn');
+
+/* -------------- export/import state -------------- */
+exportBtn.addEventListener('click', () => {
+  const state = {
+    version: 1,
+    tasks: queue.map(t => ({
+      id: t.id,
+      desc: t.desc
+    }))
+  };
+  
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `tasks-${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+  
+  URL.revokeObjectURL(url);
+});
 
 fileInput.addEventListener('change', evt => {
   const file = evt.target.files?.[0];
@@ -28,8 +50,27 @@ fileInput.addEventListener('change', evt => {
   const reader = new FileReader();
   reader.onload = e => {
     const text = e.target.result;
-    const lines = text.split(/\r?\n/);
+    
+    // Try parsing as JSON first (for state import)
+    try {
+      const state = JSON.parse(text);
+      if (state.version === 1 && Array.isArray(state.tasks)) {
+        // Import state
+        queue = state.tasks.map(t => ({
+          ...t,
+          priority: t.desc.length  // recalculate priorities
+        }));
+        queue.sort((a, b) => b.priority - a.priority);
+        renderQueue();
+        fileInput.value = '';
+        return;
+      }
+    } catch (e) {
+      // Not JSON, continue with text file processing
+    }
 
+    // Process as text file
+    const lines = text.split(/\r?\n/);
     lines.forEach(line => {
       const desc = line.trim();
       if (!desc) return;  // skip empty lines

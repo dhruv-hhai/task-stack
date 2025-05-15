@@ -17,10 +17,13 @@
         </form>
 
         <h3>Import from Obsidian</h3>
-        <input id="fileInput"
-               type="file"
-               accept=".md,text/markdown"
-               style="margin-bottom:1rem" />
+        <div style="margin-bottom:1rem">
+            <input id="fileInput"
+                   type="file"
+                   accept=".md,text/markdown,.json"
+                   style="margin-right:0.5rem" />
+            <button id="exportBtn">Export Tasks</button>
+        </div>
 
         <h3>Queued tasks</h3>
         <ul id="queueList"></ul>
