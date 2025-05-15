@@ -1,4 +1,1 @@
-document.addEventListener("DOMContentLoaded",()=>{let e=document.getElementById("app");e.innerHTML=`
-        <h1>Task Stack Manager</h1>
-        <p>Welcome to your zero-dependency task manager!</p>
-    `});
+var d=document.getElementById("taskForm"),r=document.getElementById("taskInput"),i=document.getElementById("queueList"),s=document.getElementById("popBtn"),m=document.getElementById("currentTask"),n=[];function o(){i.innerHTML="",n.forEach(t=>{let e=document.createElement("li");e.textContent=`${t.desc}  \u2022  (${t.priority})`,i.appendChild(e)})}d.addEventListener("submit",t=>{t.preventDefault();let e=r.value.trim();e&&(n.push({id:crypto.randomUUID(),desc:e,priority:e.length}),n.sort((u,c)=>c.priority-u.priority),r.value="",o())});s.addEventListener("click",()=>{if(!n.length)return;let t=n.shift();m.textContent=`\u25B6 Now doing: ${t.desc}`,o()});o();
