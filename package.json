@@ -8,7 +8,7 @@
     "start": "serve dist"
   },
   "devDependencies": {
-    "esbuild": "^0.22.1",
+    "esbuild": "^0.20.2",
     "serve": "^14.2.1"
   }
 }
