@@ -52,7 +52,7 @@ yarn.lock
 
 # Build artifacts (only during development)
 # Note: docs/ is committed before release as per plan.md
-docs/*
+# docs/*
 !docs/.gitkeep
 
 # Environment files
