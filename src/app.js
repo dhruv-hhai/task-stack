@@ -30,12 +30,10 @@ fileInput.addEventListener('change', evt => {
     const text = e.target.result;
     const lines = text.split(/\r?\n/);
 
-    const taskRegex = /^-\s+\[\s\]\s+(.+)$/;      // matches "- [ ] task …"
     lines.forEach(line => {
-      const m = taskRegex.exec(line);
-      if (!m) return;
-
-      const desc = m[1].trim();
+      const desc = line.trim();
+      if (!desc) return;  // skip empty lines
+      
       // de-dupe on description text (optional)
       if (queue.some(t => t.desc === desc)) return;
 
