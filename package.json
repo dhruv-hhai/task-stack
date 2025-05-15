@@ -5,10 +5,18 @@
   "private": true,
   "scripts": {
     "build": "./tools/build.sh",
-    "start": "serve dist"
+    "start": "serve dist",
+    "prepare": "husky"
   },
   "devDependencies": {
     "esbuild": "^0.20.2",
-    "serve": "^14.2.1"
+    "serve": "^14.2.1",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2"
+  },
+  "lint-staged": {
+    "*.{js,html,css}": [
+      "npm run build"
+    ]
   }
 }
