@@ -18,6 +18,42 @@ function renderQueue() {
   });
 }
 
+/* -------------- import from Obsidian -------------- */
+const fileInput = document.getElementById('fileInput');
+
+fileInput.addEventListener('change', evt => {
+  const file = evt.target.files?.[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    const text = e.target.result;
+    const lines = text.split(/\r?\n/);
+
+    const taskRegex = /^-\s+\[\s\]\s+(.+)$/;      // matches "- [ ] task …"
+    lines.forEach(line => {
+      const m = taskRegex.exec(line);
+      if (!m) return;
+
+      const desc = m[1].trim();
+      // de-dupe on description text (optional)
+      if (queue.some(t => t.desc === desc)) return;
+
+      queue.push({
+        id: crypto.randomUUID(),
+        desc,
+        priority: desc.length           // same naive rule
+      });
+    });
+
+    queue.sort((a, b) => b.priority - a.priority);
+    renderQueue();
+    fileInput.value = '';                // reset so same file can be re-chosen
+  };
+
+  reader.readAsText(file);
+});
+
 /* push: form submit */
 taskForm.addEventListener('submit', e => {
   e.preventDefault();
