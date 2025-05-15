@@ -7,7 +7,22 @@
     <link rel="stylesheet" href="app.css">
 </head>
 <body>
-    <div id="app"></div>
+    <div id="app">
+        <h1>Task Stack Manager</h1>
+        <p>Welcome to your zero-dependency task manager!</p>
+        
+        <form id="taskForm" style="margin-top:2rem">
+            <input id="taskInput" placeholder="Describe a task…" size="40" autocomplete="off"/>
+            <button>Add</button>
+        </form>
+
+        <h3>Queued tasks</h3>
+        <ul id="queueList"></ul>
+
+        <button id="popBtn">Pop next</button>
+
+        <h3 id="currentTask" style="margin-top:2rem"></h3>
+    </div>
     <script type="module" src="app.js"></script>
 </body>
 </html> 

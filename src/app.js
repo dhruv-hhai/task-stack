@@ -1,8 +1,46 @@
-// Main application entry point
-document.addEventListener('DOMContentLoaded', () => {
-    const app = document.getElementById('app');
-    app.innerHTML = `
-        <h1>Task Stack Manager</h1>
-        <p>Welcome to your zero-dependency task manager!</p>
-    `;
-}); 
+// app.js  (ES module → <script type="module" src="app.js"> in index.html)
+const taskForm   = document.getElementById('taskForm');
+const taskInput  = document.getElementById('taskInput');
+const queueList  = document.getElementById('queueList');
+const popBtn     = document.getElementById('popBtn');
+const currentDiv = document.getElementById('currentTask');
+
+/* -------------- domain model -------------- */
+let queue = [];          // {id, desc, priority}
+
+/* utility: regenerate <li> list */
+function renderQueue() {
+  queueList.innerHTML = '';                       // clear
+  queue.forEach(t => {
+    const li = document.createElement('li');
+    li.textContent = `${t.desc}  •  (${t.priority})`;
+    queueList.appendChild(li);
+  });
+}
+
+/* push: form submit */
+taskForm.addEventListener('submit', e => {
+  e.preventDefault();
+  const desc = taskInput.value.trim();
+  if (!desc) return;
+  queue.push({
+    id: crypto.randomUUID(),
+    desc,
+    priority: desc.length          // naive rule
+  });
+  // sort high → low
+  queue.sort((a, b) => b.priority - a.priority);
+  taskInput.value = '';
+  renderQueue();
+});
+
+/* pop: button click */
+popBtn.addEventListener('click', () => {
+  if (!queue.length) return;
+  const next = queue.shift();                     // remove first
+  currentDiv.textContent = `▶ Now doing: ${next.desc}`;
+  renderQueue();
+});
+
+/* initial paint */
+renderQueue(); 
