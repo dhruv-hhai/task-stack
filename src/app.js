@@ -43,4 +43,19 @@ popBtn.addEventListener('click', () => {
 });
 
 /* initial paint */
-renderQueue(); 
+renderQueue();
+
+/* keyboard shortcuts */
+document.addEventListener('keydown', e => {
+  // / to focus task input
+  if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
+    e.preventDefault();
+    taskInput.focus();
+  }
+  
+  // n to pop next task
+  if (e.key === 'n' && !e.ctrlKey && !e.metaKey) {
+    e.preventDefault();
+    popBtn.click();
+  }
+}); 
