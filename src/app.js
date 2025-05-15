@@ -53,8 +53,8 @@ document.addEventListener('keydown', e => {
     taskInput.focus();
   }
   
-  // n to pop next task
-  if (e.key === 'n' && !e.ctrlKey && !e.metaKey) {
+  // n to pop next task (only when not typing in input)
+  if (e.key === 'n' && !e.ctrlKey && !e.metaKey && document.activeElement !== taskInput) {
     e.preventDefault();
     popBtn.click();
   }
