@@ -1,5 +1,14 @@
 {
+  "name": "task-stack",
+  "version": "1.0.0",
+  "description": "Zero-dependency task stack manager",
+  "private": true,
+  "scripts": {
+    "build": "./tools/build.sh",
+    "start": "serve dist"
+  },
   "devDependencies": {
-    "esbuild": "^0.25.4"
+    "esbuild": "^0.22.1",
+    "serve": "^14.2.1"
   }
 }
