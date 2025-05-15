@@ -4,9 +4,12 @@ const taskInput  = document.getElementById('taskInput');
 const queueList  = document.getElementById('queueList');
 const popBtn     = document.getElementById('popBtn');
 const currentDiv = document.getElementById('currentTask');
+const fileInput  = document.getElementById('fileInput');
+const exportBtn  = document.getElementById('exportBtn');
 
 /* -------------- domain model -------------- */
 let queue = [];          // {id, desc, priority}
+let popCount = 0;        // Track number of popped tasks
 
 /* utility: regenerate <li> list */
 function renderQueue() {
@@ -18,9 +21,35 @@ function renderQueue() {
   });
 }
 
-/* -------------- import from Obsidian -------------- */
-const fileInput = document.getElementById('fileInput');
-const exportBtn = document.getElementById('exportBtn');
+/* utility: save to localStorage */
+function saveToLocalStorage() {
+  localStorage.setItem('taskQueue', JSON.stringify({
+    queue,
+    popCount
+  }));
+}
+
+/* utility: auto-export after every 5 pops */
+function autoExport() {
+  const state = {
+    version: 1,
+    tasks: queue.map(t => ({
+      id: t.id,
+      desc: t.desc
+    }))
+  };
+  
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `tasks-auto-${new Date().toISOString().split('T')[0]}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
 
 /* -------------- export/import state -------------- */
 exportBtn.addEventListener('click', () => {
@@ -38,8 +67,9 @@ exportBtn.addEventListener('click', () => {
   const a = document.createElement('a');
   a.href = url;
   a.download = `tasks-${new Date().toISOString().split('T')[0]}.json`;
+  document.body.appendChild(a);
   a.click();
-  
+  document.body.removeChild(a);
   URL.revokeObjectURL(url);
 });
 
@@ -62,6 +92,7 @@ fileInput.addEventListener('change', evt => {
         }));
         queue.sort((a, b) => b.priority - a.priority);
         renderQueue();
+        saveToLocalStorage();
         fileInput.value = '';
         return;
       }
@@ -87,6 +118,7 @@ fileInput.addEventListener('change', evt => {
 
     queue.sort((a, b) => b.priority - a.priority);
     renderQueue();
+    saveToLocalStorage();
     fileInput.value = '';                // reset so same file can be re-chosen
   };
 
@@ -107,6 +139,7 @@ taskForm.addEventListener('submit', e => {
   queue.sort((a, b) => b.priority - a.priority);
   taskInput.value = '';
   renderQueue();
+  saveToLocalStorage();
 });
 
 /* pop: button click */
@@ -115,7 +148,27 @@ popBtn.addEventListener('click', () => {
   const next = queue.shift();                     // remove first
   currentDiv.textContent = `▶ Now doing: ${next.desc}`;
   renderQueue();
+  
+  // Increment pop count and check for auto-export
+  popCount++;
+  if (popCount % 5 === 0) {
+    autoExport();
+  }
+  saveToLocalStorage();
 });
+
+/* Load from localStorage on startup */
+const savedState = localStorage.getItem('taskQueue');
+if (savedState) {
+  try {
+    const { queue: savedQueue, popCount: savedPopCount } = JSON.parse(savedState);
+    queue = savedQueue;
+    popCount = savedPopCount;
+    renderQueue();
+  } catch (e) {
+    console.error('Failed to load saved state:', e);
+  }
+}
 
 /* initial paint */
 renderQueue();
