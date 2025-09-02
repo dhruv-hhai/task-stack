@@ -28,7 +28,7 @@ jobs:
       - name: Build
         run: ./tools/build.sh
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: docs
 
